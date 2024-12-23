@@ -1,0 +1,94 @@
+# Subir un archivo
+POST http://localhost:3000/api/upload
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="example.txt"
+Content-Type: text/plain
+
+Esto es un archivo de prueba.
+--boundary--
+
+###
+
+# Listar archivos en el bucket
+GET http://localhost:3000/api/files
+
+###
+
+# Obtener un archivo por su nombre
+GET http://localhost:3000/api/files/1735005417580-aws.jpg
+
+###
+
+# Actualizar un archivo (Replace)
+PUT http://localhost:3000/api/files/example.txt
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="updated_example.txt"
+Content-Type: text/plain
+
+Este es el archivo actualizado.
+--boundary--
+
+
+###
+
+# Eliminar un archivo por su nombre
+DELETE http://localhost:3000/api/files/1734944153453-img2.jpg
+
+### Subir un archivo a S3
+POST http://localhost:3000/api/upload
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="example.txt"
+Content-Type: text/plain
+
+Contenido de prueba para el archivo.
+--boundary--
+
+###
+
+### Listar archivos en el bucket S3
+GET http://localhost:3000/api/files
+
+###
+
+### Obtener un archivo específico por su nombre
+GET http://localhost:3000/api/files/example.txt
+
+###
+### Obtener una URL firmada para un archivo en S3
+GET http://localhost:3000/api/files/1734945419895-img2.jpg/signed-url
+Accept: application/json
+
+
+### Actualizar un archivo existente en S3
+PUT http://localhost:3000/api/files/example.txt
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="updated-example.txt"
+Content-Type: text/plain
+
+Contenido actualizado del archivo.
+--boundary--
+
+###
+
+### Eliminar un archivo específico en S3
+DELETE http://localhost:3000/api/files/1735007039986-profile.png
+
+### Eliminar múltiples archivos en S3
+DELETE http://localhost:3000/api/files
+Content-Type: application/json
+
+{
+  "keys": ["1735005417580-aws.jpg", "1735007147740-profile.png"]
+}
+
+###
+# Eliminar todos los archivos en el bucket
+DELETE http://localhost:3000/api/delete-all

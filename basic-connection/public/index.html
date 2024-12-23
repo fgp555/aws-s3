@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <title>Upload a File to S3</title>
+  </head>
+  <body>
+    <main class="container">
+      <section>
+        <h1>Subir archivo a S3</h1>
+        <form id="uploadForm">
+          <input type="file" id="fileInput" name="file" required />
+          <div id="filePreview"></div>
+          <!-- Aquí se mostrará la vista previa -->
+          <button type="submit">Subir</button>
+        </form>
+        <div id="result"></div>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById("uploadForm");
+      const fileInput = document.getElementById("fileInput");
+      const resultDiv = document.getElementById("result");
+      const filePreview = document.getElementById("filePreview");
+
+      // Función para mostrar la vista previa del archivo
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            // Si es una imagen, mostrar la imagen como vista previa
+            if (file.type.startsWith("image/")) {
+              filePreview.innerHTML = `<img src="${event.target.result}" alt="Vista previa" style="max-width: 100%; max-height: 200px;" />`;
+            } else {
+              // Si no es una imagen, mostrar solo el nombre del archivo
+              filePreview.innerHTML = `<p>Vista previa no disponible para este tipo de archivo.</p>`;
+            }
+          };
+          reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        } else {
+          filePreview.innerHTML = ""; // Limpiar la vista previa si no hay archivo
+        }
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const file = fileInput.files[0];
+        if (!file) {
+          alert("Por favor selecciona un archivo.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            resultDiv.innerHTML = `
+            <p>Archivo subido: <a href="${data.url}" target="_blank">${data.url}</a></p>
+            <img src="${data.url}" alt="">
+            `;
+          } else {
+            resultDiv.textContent = `Error: ${data.message}`;
+          }
+        } catch (error) {
+          console.error("Error al subir el archivo:", error);
+          resultDiv.textContent = "Ocurrió un error al subir el archivo.";
+        }
+      });
+    </script>
+  </body>
+</html>

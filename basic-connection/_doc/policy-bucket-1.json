@@ -1,0 +1,13 @@
+{
+  "Id": "Policy1734920868739",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1734920867940",
+      "Action": "s3:*",
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::my-s3-241222/*",
+      "Principal": "*"
+    }
+  ]
+}
